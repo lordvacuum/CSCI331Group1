@@ -1,6 +1,6 @@
-**Homework 2 - Single Table Queries**
+# H1 Homework 2 - Single Table Queries
 
-DB: WideWorldImporters
-IPYNB Files for Queries
-*Presentation Link (Drive):*
-*https://drive.google.com/drive/folders/1TknVs06eOZZSq73ApmQESsWvUxxYH1Nt?usp=sharing*
+DB: WideWorldImporters <br> 
+*Presentation Link (Drive):* <br>
+https://drive.google.com/drive/folders/1TknVs06eOZZSq73ApmQESsWvUxxYH1Nt?usp=sharing <br>
+IPYNB Files for Queries <br>
