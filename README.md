@@ -1,4 +1,4 @@
-# H1 Homework 2 - Single Table Queries
+# HW Homework 2 - Single Table Queries
 
 DB: WideWorldImporters <br> 
 *Presentation Link (Drive):* <br>
