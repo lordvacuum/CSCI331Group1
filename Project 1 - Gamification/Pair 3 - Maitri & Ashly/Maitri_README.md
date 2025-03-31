@@ -1,3 +1,8 @@
+# Pair: Maitri and Ashly
+#### Link to Maitri's solutions to Ashly Cases
+https://drive.google.com/file/d/1yi7p2NNAbmOuS1K6iwi1Fjm0gNW8ma3U/view?usp=sharing
+
+#### Maitri Vathada Cases
 1. A man with a German accent was seen fleeing from the store TSQLV6 after Employee Yael Peled was murdered on Halloween 2020. Find out who did it. 
 
 Ans: CustID 44 - George Louvredis
@@ -35,7 +40,7 @@ Search the orderlines, orders and customers to find the suspect.
 
 
 
-Medium Article:
+#### Medium Article:
 *SQL Server metadata: Unlock the black box of your database schema* 
 
 https://luchiana-dumitrescu25.medium.com/unlock-the-black-box-of-your-database-schema-by-querying-sql-server-metadata-ecf98bfc96a6
