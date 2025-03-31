@@ -6,8 +6,8 @@ IPYNB Files for Queries <br>
 Gantt Chart <br>
 To Do List <br> 
 
-DB:
-AdventureWorks
-AdventureWorksDW 
-WideWorldImporters W
-ideWorldImportersDW
+DB:<br>
+AdventureWorks<br>
+AdventureWorksDW <br>
+WideWorldImporters <br>
+WideWorldImportersDW<br>
