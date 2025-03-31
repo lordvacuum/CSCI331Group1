@@ -1,0 +1,973 @@
+{
+    "metadata": {
+        "kernelspec": {
+            "name": "SQL",
+            "display_name": "SQL",
+            "language": "sql"
+        },
+        "language_info": {
+            "name": "sql",
+            "version": ""
+        }
+    },
+    "nbformat_minor": 2,
+    "nbformat": 4,
+    "cells": [
+        {
+            "cell_type": "markdown",
+            "source": [
+                "**Project 1 Gamification**"
+            ],
+            "metadata": {
+                "azdata_cell_guid": "11a8aa1a-83ea-4d1b-a1fb-455f072471ea"
+            },
+            "attachments": {}
+        },
+        {
+            "cell_type": "markdown",
+            "source": [
+                "Jaskaran Bains, partnered with Richard Garnica for Project 1 members of Group 1.   \n",
+                "Assignment Overview:  \n",
+                "\n",
+                "The goal of this gamification project is to enhance students' learning experience with T-SQL using Azure Data Studio and SQL Notebooks. Students will work in pairs, alternating between the roles of Business Stakeholder and Programmer/Analyst, to solve real-world problems using the provided sample databases. The samples below are for style and are trivial. You will try to push your personal envelope with your pair programmer to delve deeply into your understanding of SQL for perspective employers.\n",
+                "\n",
+                "The assignment is 7 cases per group member collaborating in 2 pairs\n",
+                "\n",
+                "Learn to be pro-active and ask questions when you do not understand something. Questioning is your due dilgence and demonstrates that you are starting to understand that time in business is quantified in terms of money and working solutions.\n",
+                "\n",
+                "Each case will be a different scenario that requires the use of appropriate tools in your personal toolbelt (Azure Data Studio, SQL Notebooks, etc.) T-SQL queries, sub-queries, Views, Table Expressions, CTE, Scalar and inline table functions, cross and outer appply, and stored procedures. To demonstrate the skills that you have gained to this point in the semester\n",
+                "\n",
+                "Create MP4 3.5 to 5 minutes at a minimum per each video solution. Each case will be presented by the Navigator of the drivers solution and the shared collaboration in the development.\n",
+                "\n",
+                "Submit your code to GitHub with a README.md file explaining all of your answers in one or two sentences with a link to your video in the README.md"
+            ],
+            "metadata": {
+                "azdata_cell_guid": "8055e25a-da49-4c45-826a-4b533e75e77e"
+            },
+            "attachments": {}
+        },
+        {
+            "cell_type": "markdown",
+            "source": [
+                "**Case # 001: The Criminal Invoice**\n",
+                "\n",
+                "AdventureWorks has detected that the existence of an vendor that consistently sends invoices even though they are not being used. All we know is that their business entity ID ends with an 8 and they have \"Touring\" somwhere in their name. \n",
+                "\n",
+                "Objectives:  \n",
+                "\\- FInd vendors who have not been transacted with  \n",
+                "\\- Find those vendors whos business entity ID ends with an 8  \n",
+                "\\- Find those whose name includes \"Touring\"  \n",
+                "\\- Combine your findings"
+            ],
+            "metadata": {
+                "azdata_cell_guid": "d590738d-a3d4-45f8-b549-14e51e29b205"
+            },
+            "attachments": {}
+        },
+        {
+            "cell_type": "code",
+            "source": [
+                "SELECT pv.BusinessEntityID, pv.Name\n",
+                "FROM Purchasing.Vendor pv\n",
+                "JOIN (\n",
+                "    SELECT BusinessEntityID\n",
+                "    FROM Purchasing.Vendor\n",
+                "    EXCEPT\n",
+                "    SELECT VendorID\n",
+                "    FROM Purchasing.PurchaseOrderHeader\n",
+                ") AS InactiveVendors\n",
+                "ON pv.BusinessEntityID = InactiveVendors.BusinessEntityID\n",
+                "WHERE pv.BusinessEntityID LIKE '%8'  \n",
+                "AND pv.Name LIKE '%Touring%';        "
+            ],
+            "metadata": {
+                "azdata_cell_guid": "36464b64-7a95-49b1-b5b9-7545d399efe8",
+                "language": "sql",
+                "tags": []
+            },
+            "outputs": [
+                {
+                    "output_type": "display_data",
+                    "data": {
+                        "text/html": "(1 row affected)"
+                    },
+                    "metadata": {}
+                },
+                {
+                    "output_type": "display_data",
+                    "data": {
+                        "text/html": "Total execution time: 00:00:00.050"
+                    },
+                    "metadata": {}
+                },
+                {
+                    "output_type": "execute_result",
+                    "metadata": {},
+                    "execution_count": 8,
+                    "data": {
+                        "application/vnd.dataresource+json": {
+                            "schema": {
+                                "fields": [
+                                    {
+                                        "name": "BusinessEntityID"
+                                    },
+                                    {
+                                        "name": "Name"
+                                    }
+                                ]
+                            },
+                            "data": [
+                                {
+                                    "BusinessEntityID": "1668",
+                                    "Name": "Touring Equipment Center"
+                                }
+                            ]
+                        },
+                        "text/html": [
+                            "<table>",
+                            "<tr><th>BusinessEntityID</th><th>Name</th></tr>",
+                            "<tr><td>1668</td><td>Touring Equipment Center</td></tr>",
+                            "</table>"
+                        ]
+                    }
+                }
+            ],
+            "execution_count": 8
+        },
+        {
+            "cell_type": "markdown",
+            "source": [
+                "**Case # 002: The Summer Scandal**\n",
+                "\n",
+                "The year is 2013, it's the hottest July recorded in the last decade, AdventureWorks has detected some disappearences of high value items. These items have a productID ending in 5, that are worth over $8000. The the sales person associated with these items is our number 1 suspect but they're missing. Wouldn't it be great if we could find their name?\n",
+                "\n",
+                "Objectives:  \n",
+                "\\- Find products sold in July of 2013  \n",
+                "\\- Find products whose IDs end in 5 and are worth over $8000  \n",
+                "\\- FInd the sales person associated with their sales  \n",
+                "\\- Combine your findings"
+            ],
+            "metadata": {
+                "language": "sql",
+                "azdata_cell_guid": "d21f554f-6ad2-43de-91ec-760b8020a854"
+            },
+            "attachments": {}
+        },
+        {
+            "cell_type": "code",
+            "source": [
+                "SELECT DISTINCT\n",
+                "    p.Name AS ProductName,\n",
+                "    sod.OrderQty * sod.UnitPrice AS OrderValue,\n",
+                "    th.Quantity AS TransactionQty,\n",
+                "    th.ActualCost,\n",
+                "    soh.SalesPersonID AS SuspectID,\n",
+                "    pp.FirstName + ' ' + pp.LastName AS SuspectName\n",
+                "FROM \n",
+                "    Sales.SalesOrderDetail sod\n",
+                "INNER JOIN \n",
+                "    Production.Product p ON sod.ProductID = p.ProductID\n",
+                "INNER JOIN \n",
+                "    Sales.SalesOrderHeader soh ON sod.SalesOrderID = soh.SalesOrderID\n",
+                "INNER JOIN \n",
+                "    Production.TransactionHistory th ON p.ProductID = th.ProductID\n",
+                "INNER JOIN \n",
+                "    Person.Person pp ON soh.SalesPersonID = pp.BusinessEntityID\n",
+                "WHERE \n",
+                "    soh.OrderDate BETWEEN '2013-07-01' AND '2013-07-31'\n",
+                "    AND p.ProductID LIKE '%5'\n",
+                "    AND th.TransactionDate BETWEEN '2013-07-31' AND '2014-08-03'\n",
+                "    AND sod.OrderQty * sod.UnitPrice > 8000\n",
+                "ORDER BY \n",
+                "    OrderValue DESC;"
+            ],
+            "metadata": {
+                "language": "sql",
+                "azdata_cell_guid": "ba785012-9e8f-45da-8698-92f0ac7c4a66"
+            },
+            "outputs": [
+                {
+                    "output_type": "display_data",
+                    "data": {
+                        "text/html": "(20 rows affected)"
+                    },
+                    "metadata": {}
+                },
+                {
+                    "output_type": "display_data",
+                    "data": {
+                        "text/html": "Total execution time: 00:00:00.117"
+                    },
+                    "metadata": {}
+                },
+                {
+                    "output_type": "execute_result",
+                    "metadata": {},
+                    "execution_count": 15,
+                    "data": {
+                        "application/vnd.dataresource+json": {
+                            "schema": {
+                                "fields": [
+                                    {
+                                        "name": "ProductName"
+                                    },
+                                    {
+                                        "name": "OrderValue"
+                                    },
+                                    {
+                                        "name": "TransactionQty"
+                                    },
+                                    {
+                                        "name": "ActualCost"
+                                    },
+                                    {
+                                        "name": "SuspectID"
+                                    },
+                                    {
+                                        "name": "SuspectName"
+                                    }
+                                ]
+                            },
+                            "data": [
+                                {
+                                    "ProductName": "Road-250 Black, 52",
+                                    "OrderValue": "8796.06",
+                                    "TransactionQty": "1",
+                                    "ActualCost": "0.00",
+                                    "SuspectID": "282",
+                                    "SuspectName": "José Saraiva"
+                                },
+                                {
+                                    "ProductName": "Road-250 Black, 52",
+                                    "OrderValue": "8796.06",
+                                    "TransactionQty": "1",
+                                    "ActualCost": "1759.212",
+                                    "SuspectID": "282",
+                                    "SuspectName": "José Saraiva"
+                                },
+                                {
+                                    "ProductName": "Road-250 Black, 52",
+                                    "OrderValue": "8796.06",
+                                    "TransactionQty": "1",
+                                    "ActualCost": "2443.35",
+                                    "SuspectID": "282",
+                                    "SuspectName": "José Saraiva"
+                                },
+                                {
+                                    "ProductName": "Road-250 Black, 52",
+                                    "OrderValue": "8796.06",
+                                    "TransactionQty": "2",
+                                    "ActualCost": "0.00",
+                                    "SuspectID": "282",
+                                    "SuspectName": "José Saraiva"
+                                },
+                                {
+                                    "ProductName": "Road-250 Black, 52",
+                                    "OrderValue": "8796.06",
+                                    "TransactionQty": "2",
+                                    "ActualCost": "1759.212",
+                                    "SuspectID": "282",
+                                    "SuspectName": "José Saraiva"
+                                },
+                                {
+                                    "ProductName": "Road-250 Black, 52",
+                                    "OrderValue": "8796.06",
+                                    "TransactionQty": "3",
+                                    "ActualCost": "1759.212",
+                                    "SuspectID": "282",
+                                    "SuspectName": "José Saraiva"
+                                },
+                                {
+                                    "ProductName": "Road-250 Black, 52",
+                                    "OrderValue": "8796.06",
+                                    "TransactionQty": "4",
+                                    "ActualCost": "1759.212",
+                                    "SuspectID": "282",
+                                    "SuspectName": "José Saraiva"
+                                },
+                                {
+                                    "ProductName": "Road-250 Black, 52",
+                                    "OrderValue": "8796.06",
+                                    "TransactionQty": "5",
+                                    "ActualCost": "1759.212",
+                                    "SuspectID": "282",
+                                    "SuspectName": "José Saraiva"
+                                },
+                                {
+                                    "ProductName": "Road-250 Black, 52",
+                                    "OrderValue": "8796.06",
+                                    "TransactionQty": "6",
+                                    "ActualCost": "1759.212",
+                                    "SuspectID": "282",
+                                    "SuspectName": "José Saraiva"
+                                },
+                                {
+                                    "ProductName": "Road-250 Black, 52",
+                                    "OrderValue": "8796.06",
+                                    "TransactionQty": "7",
+                                    "ActualCost": "1759.212",
+                                    "SuspectID": "282",
+                                    "SuspectName": "José Saraiva"
+                                },
+                                {
+                                    "ProductName": "Road-250 Black, 52",
+                                    "OrderValue": "8796.06",
+                                    "TransactionQty": "8",
+                                    "ActualCost": "1759.212",
+                                    "SuspectID": "282",
+                                    "SuspectName": "José Saraiva"
+                                },
+                                {
+                                    "ProductName": "Road-250 Black, 52",
+                                    "OrderValue": "8796.06",
+                                    "TransactionQty": "9",
+                                    "ActualCost": "1759.212",
+                                    "SuspectID": "282",
+                                    "SuspectName": "José Saraiva"
+                                },
+                                {
+                                    "ProductName": "Road-250 Black, 52",
+                                    "OrderValue": "8796.06",
+                                    "TransactionQty": "19",
+                                    "ActualCost": "0.00",
+                                    "SuspectID": "282",
+                                    "SuspectName": "José Saraiva"
+                                },
+                                {
+                                    "ProductName": "Road-250 Black, 52",
+                                    "OrderValue": "8796.06",
+                                    "TransactionQty": "21",
+                                    "ActualCost": "0.00",
+                                    "SuspectID": "282",
+                                    "SuspectName": "José Saraiva"
+                                },
+                                {
+                                    "ProductName": "Road-250 Black, 52",
+                                    "OrderValue": "8796.06",
+                                    "TransactionQty": "22",
+                                    "ActualCost": "0.00",
+                                    "SuspectID": "282",
+                                    "SuspectName": "José Saraiva"
+                                },
+                                {
+                                    "ProductName": "Road-250 Black, 52",
+                                    "OrderValue": "8796.06",
+                                    "TransactionQty": "35",
+                                    "ActualCost": "0.00",
+                                    "SuspectID": "282",
+                                    "SuspectName": "José Saraiva"
+                                },
+                                {
+                                    "ProductName": "Road-250 Black, 52",
+                                    "OrderValue": "8796.06",
+                                    "TransactionQty": "43",
+                                    "ActualCost": "0.00",
+                                    "SuspectID": "282",
+                                    "SuspectName": "José Saraiva"
+                                },
+                                {
+                                    "ProductName": "Road-250 Black, 52",
+                                    "OrderValue": "8796.06",
+                                    "TransactionQty": "44",
+                                    "ActualCost": "0.00",
+                                    "SuspectID": "282",
+                                    "SuspectName": "José Saraiva"
+                                },
+                                {
+                                    "ProductName": "Road-250 Black, 52",
+                                    "OrderValue": "8796.06",
+                                    "TransactionQty": "46",
+                                    "ActualCost": "0.00",
+                                    "SuspectID": "282",
+                                    "SuspectName": "José Saraiva"
+                                },
+                                {
+                                    "ProductName": "Road-250 Black, 52",
+                                    "OrderValue": "8796.06",
+                                    "TransactionQty": "48",
+                                    "ActualCost": "0.00",
+                                    "SuspectID": "282",
+                                    "SuspectName": "José Saraiva"
+                                }
+                            ]
+                        },
+                        "text/html": [
+                            "<table>",
+                            "<tr><th>ProductName</th><th>OrderValue</th><th>TransactionQty</th><th>ActualCost</th><th>SuspectID</th><th>SuspectName</th></tr>",
+                            "<tr><td>Road-250 Black, 52</td><td>8796.06</td><td>1</td><td>0.00</td><td>282</td><td>José Saraiva</td></tr>",
+                            "<tr><td>Road-250 Black, 52</td><td>8796.06</td><td>1</td><td>1759.212</td><td>282</td><td>José Saraiva</td></tr>",
+                            "<tr><td>Road-250 Black, 52</td><td>8796.06</td><td>1</td><td>2443.35</td><td>282</td><td>José Saraiva</td></tr>",
+                            "<tr><td>Road-250 Black, 52</td><td>8796.06</td><td>2</td><td>0.00</td><td>282</td><td>José Saraiva</td></tr>",
+                            "<tr><td>Road-250 Black, 52</td><td>8796.06</td><td>2</td><td>1759.212</td><td>282</td><td>José Saraiva</td></tr>",
+                            "<tr><td>Road-250 Black, 52</td><td>8796.06</td><td>3</td><td>1759.212</td><td>282</td><td>José Saraiva</td></tr>",
+                            "<tr><td>Road-250 Black, 52</td><td>8796.06</td><td>4</td><td>1759.212</td><td>282</td><td>José Saraiva</td></tr>",
+                            "<tr><td>Road-250 Black, 52</td><td>8796.06</td><td>5</td><td>1759.212</td><td>282</td><td>José Saraiva</td></tr>",
+                            "<tr><td>Road-250 Black, 52</td><td>8796.06</td><td>6</td><td>1759.212</td><td>282</td><td>José Saraiva</td></tr>",
+                            "<tr><td>Road-250 Black, 52</td><td>8796.06</td><td>7</td><td>1759.212</td><td>282</td><td>José Saraiva</td></tr>",
+                            "<tr><td>Road-250 Black, 52</td><td>8796.06</td><td>8</td><td>1759.212</td><td>282</td><td>José Saraiva</td></tr>",
+                            "<tr><td>Road-250 Black, 52</td><td>8796.06</td><td>9</td><td>1759.212</td><td>282</td><td>José Saraiva</td></tr>",
+                            "<tr><td>Road-250 Black, 52</td><td>8796.06</td><td>19</td><td>0.00</td><td>282</td><td>José Saraiva</td></tr>",
+                            "<tr><td>Road-250 Black, 52</td><td>8796.06</td><td>21</td><td>0.00</td><td>282</td><td>José Saraiva</td></tr>",
+                            "<tr><td>Road-250 Black, 52</td><td>8796.06</td><td>22</td><td>0.00</td><td>282</td><td>José Saraiva</td></tr>",
+                            "<tr><td>Road-250 Black, 52</td><td>8796.06</td><td>35</td><td>0.00</td><td>282</td><td>José Saraiva</td></tr>",
+                            "<tr><td>Road-250 Black, 52</td><td>8796.06</td><td>43</td><td>0.00</td><td>282</td><td>José Saraiva</td></tr>",
+                            "<tr><td>Road-250 Black, 52</td><td>8796.06</td><td>44</td><td>0.00</td><td>282</td><td>José Saraiva</td></tr>",
+                            "<tr><td>Road-250 Black, 52</td><td>8796.06</td><td>46</td><td>0.00</td><td>282</td><td>José Saraiva</td></tr>",
+                            "<tr><td>Road-250 Black, 52</td><td>8796.06</td><td>48</td><td>0.00</td><td>282</td><td>José Saraiva</td></tr>",
+                            "</table>"
+                        ]
+                    }
+                }
+            ],
+            "execution_count": 15
+        },
+        {
+            "cell_type": "markdown",
+            "source": [
+                "**Case # 003: The Vampire Vendor's Assistant**\n",
+                "\n",
+                "What good is an unfair vendor? How about a criminal one? It's been flagged that vendors in June 2014 have been in cahoots with a specific buyer to artifically inflate their invoices. These vendors always have Ids that end with 0, and not much is known about the sales person except that his last name ends with a \"berg\". Idenitfy this miscreant in our midst. \n",
+                "\n",
+                "Objectives:  \n",
+                "\\- Find vendors whose IDs end in 0  \n",
+                "\\- Find those with big order values in June 2014.   \n",
+                "\\- FInd the sales person associated with those sales, whose name ends in \"berg\"  \n",
+                "\\- Combine your findings"
+            ],
+            "metadata": {
+                "language": "sql",
+                "azdata_cell_guid": "183ec429-a831-403f-acf6-ea495aecfe30"
+            },
+            "attachments": {}
+        },
+        {
+            "cell_type": "code",
+            "source": [
+                "SELECT DISTINCT\n",
+                "    v.Name AS VendorName,\n",
+                "    poh.PurchaseOrderID,\n",
+                "    pod.OrderQty * pod.UnitPrice AS OrderValue,\n",
+                "    poh.OrderDate,\n",
+                "    pp.FirstName + ' ' + pp.LastName AS BuyerName\n",
+                "FROM \n",
+                "    Purchasing.Vendor v\n",
+                "INNER JOIN \n",
+                "    Purchasing.PurchaseOrderHeader poh ON v.BusinessEntityID = poh.VendorID\n",
+                "INNER JOIN \n",
+                "    Purchasing.PurchaseOrderDetail pod ON poh.PurchaseOrderID = pod.PurchaseOrderID\n",
+                "LEFT JOIN \n",
+                "    Person.Person pp ON poh.EmployeeID = pp.BusinessEntityID\n",
+                "WHERE \n",
+                "    v.BusinessEntityID LIKE '%0'\n",
+                "    AND poh.OrderDate BETWEEN '2014-06-01' AND '2014-06-30'\n",
+                "    AND pod.OrderQty * pod.UnitPrice > 500\n",
+                "    AND pp.LastName LIKE '%berg'\n",
+                "ORDER BY \n",
+                "    OrderValue DESC;"
+            ],
+            "metadata": {
+                "language": "sql",
+                "azdata_cell_guid": "899c336a-4008-4fb5-a78c-161c261080b8"
+            },
+            "outputs": [
+                {
+                    "output_type": "display_data",
+                    "data": {
+                        "text/html": "(5 rows affected)"
+                    },
+                    "metadata": {}
+                },
+                {
+                    "output_type": "display_data",
+                    "data": {
+                        "text/html": "Total execution time: 00:00:00.018"
+                    },
+                    "metadata": {}
+                },
+                {
+                    "output_type": "execute_result",
+                    "metadata": {},
+                    "execution_count": 18,
+                    "data": {
+                        "application/vnd.dataresource+json": {
+                            "schema": {
+                                "fields": [
+                                    {
+                                        "name": "VendorName"
+                                    },
+                                    {
+                                        "name": "PurchaseOrderID"
+                                    },
+                                    {
+                                        "name": "OrderValue"
+                                    },
+                                    {
+                                        "name": "OrderDate"
+                                    },
+                                    {
+                                        "name": "BuyerName"
+                                    }
+                                ]
+                            },
+                            "data": [
+                                {
+                                    "VendorName": "Jackson Authority",
+                                    "PurchaseOrderID": "3187",
+                                    "OrderValue": "26559.225",
+                                    "OrderDate": "2014-06-04 00:00:00.000",
+                                    "BuyerName": "Mikael Sandberg"
+                                },
+                                {
+                                    "VendorName": "Hybrid Bicycle Center",
+                                    "PurchaseOrderID": "3497",
+                                    "OrderValue": "22516.725",
+                                    "OrderDate": "2014-06-28 00:00:00.000",
+                                    "BuyerName": "Mikael Sandberg"
+                                },
+                                {
+                                    "VendorName": "Jackson Authority",
+                                    "PurchaseOrderID": "3187",
+                                    "OrderValue": "19952.625",
+                                    "OrderDate": "2014-06-04 00:00:00.000",
+                                    "BuyerName": "Mikael Sandberg"
+                                },
+                                {
+                                    "VendorName": "Jackson Authority",
+                                    "PurchaseOrderID": "3187",
+                                    "OrderValue": "17319.225",
+                                    "OrderDate": "2014-06-04 00:00:00.000",
+                                    "BuyerName": "Mikael Sandberg"
+                                },
+                                {
+                                    "VendorName": "Lakewood Bicycle",
+                                    "PurchaseOrderID": "3347",
+                                    "OrderValue": "5711.475",
+                                    "OrderDate": "2014-06-18 00:00:00.000",
+                                    "BuyerName": "Mikael Sandberg"
+                                }
+                            ]
+                        },
+                        "text/html": [
+                            "<table>",
+                            "<tr><th>VendorName</th><th>PurchaseOrderID</th><th>OrderValue</th><th>OrderDate</th><th>BuyerName</th></tr>",
+                            "<tr><td>Jackson Authority</td><td>3187</td><td>26559.225</td><td>2014-06-04 00:00:00.000</td><td>Mikael Sandberg</td></tr>",
+                            "<tr><td>Hybrid Bicycle Center</td><td>3497</td><td>22516.725</td><td>2014-06-28 00:00:00.000</td><td>Mikael Sandberg</td></tr>",
+                            "<tr><td>Jackson Authority</td><td>3187</td><td>19952.625</td><td>2014-06-04 00:00:00.000</td><td>Mikael Sandberg</td></tr>",
+                            "<tr><td>Jackson Authority</td><td>3187</td><td>17319.225</td><td>2014-06-04 00:00:00.000</td><td>Mikael Sandberg</td></tr>",
+                            "<tr><td>Lakewood Bicycle</td><td>3347</td><td>5711.475</td><td>2014-06-18 00:00:00.000</td><td>Mikael Sandberg</td></tr>",
+                            "</table>"
+                        ]
+                    }
+                }
+            ],
+            "execution_count": 18
+        },
+        {
+            "cell_type": "markdown",
+            "source": [
+                "**Case # 004: The Ghastly Glitch**\n",
+                "\n",
+                "In the months of October to Decebmer in 2013, a glitch infiltrates the system and sabotages items whose product IDs start with 7. Potentially transaction IDs which end in 553 have been affected. Some preliminary analysis has deduced that it could have been either 1 or 2 products but not more. Your job, young SQL Sleuth, is to idenitfy these products so that the glitch can be delt with. \n",
+                "\n",
+                "Objectives:  \n",
+                "\\- Find Items sold in October through December 2013.   \n",
+                "\\- Find those with big order values in June 2014.   \n",
+                "\\- FInd the sales person associated with those sales, whose name ends in \"berg\"  \n",
+                "\\- Combine your findings"
+            ],
+            "metadata": {
+                "language": "sql",
+                "azdata_cell_guid": "a17e59b3-79a1-46c8-a3c0-ad382d95e4a8"
+            },
+            "attachments": {}
+        },
+        {
+            "cell_type": "code",
+            "source": [
+                "SELECT DISTINCT\n",
+                "    p.Name AS ProductName,\n",
+                "    th.TransactionID,\n",
+                "    th.Quantity AS TransactionQty,\n",
+                "    th.ActualCost,\n",
+                "    th.TransactionDate\n",
+                "FROM \n",
+                "    Production.TransactionHistory th\n",
+                "INNER JOIN \n",
+                "    Production.Product p ON th.ProductID = p.ProductID\n",
+                "WHERE \n",
+                "    th.ProductID LIKE '7%'\n",
+                "    AND th.TransactionDate BETWEEN '2013-10-01' AND '2013-12-31'\n",
+                "    AND (th.Quantity > 10) \n",
+                "    AND (th.TransactionID LIKE '%553')\n",
+                "ORDER BY \n",
+                "    th.TransactionDate DESC, th.Quantity ASC;"
+            ],
+            "metadata": {
+                "language": "sql",
+                "azdata_cell_guid": "1c6999ec-2c38-4cc3-9524-7465661fb103"
+            },
+            "outputs": [
+                {
+                    "output_type": "display_data",
+                    "data": {
+                        "text/html": "(2 rows affected)"
+                    },
+                    "metadata": {}
+                },
+                {
+                    "output_type": "display_data",
+                    "data": {
+                        "text/html": "Total execution time: 00:00:00.060"
+                    },
+                    "metadata": {}
+                },
+                {
+                    "output_type": "execute_result",
+                    "metadata": {},
+                    "execution_count": 25,
+                    "data": {
+                        "application/vnd.dataresource+json": {
+                            "schema": {
+                                "fields": [
+                                    {
+                                        "name": "ProductName"
+                                    },
+                                    {
+                                        "name": "TransactionID"
+                                    },
+                                    {
+                                        "name": "TransactionQty"
+                                    },
+                                    {
+                                        "name": "ActualCost"
+                                    },
+                                    {
+                                        "name": "TransactionDate"
+                                    }
+                                ]
+                            },
+                            "data": [
+                                {
+                                    "ProductName": "Mountain-200 Black, 42",
+                                    "TransactionID": "154553",
+                                    "TransactionQty": "11",
+                                    "ActualCost": "1652.3928",
+                                    "TransactionDate": "2013-12-31 00:00:00.000"
+                                },
+                                {
+                                    "ProductName": "Road-550-W Yellow, 38",
+                                    "TransactionID": "134553",
+                                    "TransactionQty": "60",
+                                    "ActualCost": "0.00",
+                                    "TransactionDate": "2013-11-02 00:00:00.000"
+                                }
+                            ]
+                        },
+                        "text/html": [
+                            "<table>",
+                            "<tr><th>ProductName</th><th>TransactionID</th><th>TransactionQty</th><th>ActualCost</th><th>TransactionDate</th></tr>",
+                            "<tr><td>Mountain-200 Black, 42</td><td>154553</td><td>11</td><td>1652.3928</td><td>2013-12-31 00:00:00.000</td></tr>",
+                            "<tr><td>Road-550-W Yellow, 38</td><td>134553</td><td>60</td><td>0.00</td><td>2013-11-02 00:00:00.000</td></tr>",
+                            "</table>"
+                        ]
+                    }
+                }
+            ],
+            "execution_count": 25
+        },
+        {
+            "cell_type": "markdown",
+            "source": [
+                "**Case # 005: The Costly Crash**  \n",
+                "<span style=\"font-family: -apple-system, BlinkMacSystemFont, sans-serif; color: var(--vscode-foreground);\"><br>A specific in house made product is causing the website to crash. This item is not in any product list purchased form a vendor. This product is some kind of \"Fork\" and it's product ID ends in a 4. Find this product name so that the website can be fixed.&nbsp;</span>    \n",
+                "\n",
+                "Objectives:  \n",
+                "\\- Find Items who arein the product table but not in the products from vendors  \n",
+                "\\- Find those whose name include \"Fork\"  \n",
+                "\\- Find those products whose ID ends in 4  \n",
+                "<span style=\"font-family: -apple-system, BlinkMacSystemFont, sans-serif; color: var(--vscode-foreground);\">- Combine your findings</span>"
+            ],
+            "metadata": {
+                "language": "sql",
+                "azdata_cell_guid": "0118030f-8292-44f6-94e5-7596809fca30"
+            },
+            "attachments": {}
+        },
+        {
+            "cell_type": "code",
+            "source": [
+                "SELECT p.ProductID, p.Name\n",
+                "FROM Production.Product AS p\n",
+                "JOIN (\n",
+                "    SELECT ProductID\n",
+                "    FROM Production.Product\n",
+                "    EXCEPT\n",
+                "    SELECT ProductID\n",
+                "    FROM Purchasing.ProductVendor\n",
+                ") AS nonVendorProducts\n",
+                "ON p.ProductID = nonVendorProducts.ProductID\n",
+                "WHERE \n",
+                "p.Name LIKE '%Fork%' \n",
+                "AND p.ProductID LIKE '%4'"
+            ],
+            "metadata": {
+                "language": "sql",
+                "azdata_cell_guid": "7792999b-4631-41ae-a8f6-b69306470a47"
+            },
+            "outputs": [
+                {
+                    "output_type": "display_data",
+                    "data": {
+                        "text/html": "(1 row affected)"
+                    },
+                    "metadata": {}
+                },
+                {
+                    "output_type": "display_data",
+                    "data": {
+                        "text/html": "Total execution time: 00:00:00.016"
+                    },
+                    "metadata": {}
+                },
+                {
+                    "output_type": "execute_result",
+                    "metadata": {},
+                    "execution_count": 46,
+                    "data": {
+                        "application/vnd.dataresource+json": {
+                            "schema": {
+                                "fields": [
+                                    {
+                                        "name": "ProductID"
+                                    },
+                                    {
+                                        "name": "Name"
+                                    }
+                                ]
+                            },
+                            "data": [
+                                {
+                                    "ProductID": "804",
+                                    "Name": "HL Fork"
+                                }
+                            ]
+                        },
+                        "text/html": [
+                            "<table>",
+                            "<tr><th>ProductID</th><th>Name</th></tr>",
+                            "<tr><td>804</td><td>HL Fork</td></tr>",
+                            "</table>"
+                        ]
+                    }
+                }
+            ],
+            "execution_count": 46
+        },
+        {
+            "cell_type": "markdown",
+            "source": [
+                "**Case # 006: The Lonely Stay**  \n",
+                "<span style=\"font-family: -apple-system, BlinkMacSystemFont, sans-serif; color: var(--vscode-foreground);\"><br>Adventure works has identified a product, whose ID ends with a 2 that has not been sold in 2013. They are trying to push a promotion on this item but all they know is that it is some kind of \"stay\" ... whatever that means.&nbsp;</span> \n",
+                "\n",
+                "Objectives:  \n",
+                "\\- Find items that have not been sold  \n",
+                "\\- Find those items paramterized within the year 2013  \n",
+                "\\- Find those whose id ends with a 2  \n",
+                "\\- Find those whose name contains \"stay\"  \n",
+                "<span style=\"font-family: -apple-system, BlinkMacSystemFont, sans-serif; color: var(--vscode-foreground);\">- Combine your findings</span>"
+            ],
+            "metadata": {
+                "language": "sql",
+                "azdata_cell_guid": "bd6b47bd-e4d1-45f2-964d-970cc69693d5"
+            },
+            "attachments": {}
+        },
+        {
+            "cell_type": "code",
+            "source": [
+                "SELECT \n",
+                "    p.ProductID,\n",
+                "    p.Name AS ProductName\n",
+                "FROM \n",
+                "    Production.Product p\n",
+                "LEFT JOIN \n",
+                "    Sales.SalesOrderDetail sod ON p.ProductID = sod.ProductID\n",
+                "    AND sod.ModifiedDate BETWEEN '2013-01-01' AND '2013-12-31'\n",
+                "WHERE \n",
+                "    p.ProductID LIKE '%2'\n",
+                "    AND sod.SalesOrderID IS NULL\n",
+                "    AND p.Name LIKE '%stays%'\n",
+                "ORDER BY \n",
+                "    p.ProductID;"
+            ],
+            "metadata": {
+                "language": "sql",
+                "azdata_cell_guid": "ba3e4323-c77a-44d1-b8e1-b245158909aa"
+            },
+            "outputs": [
+                {
+                    "output_type": "display_data",
+                    "data": {
+                        "text/html": "(1 row affected)"
+                    },
+                    "metadata": {}
+                },
+                {
+                    "output_type": "display_data",
+                    "data": {
+                        "text/html": "Total execution time: 00:00:00.028"
+                    },
+                    "metadata": {}
+                },
+                {
+                    "output_type": "execute_result",
+                    "metadata": {},
+                    "execution_count": 50,
+                    "data": {
+                        "application/vnd.dataresource+json": {
+                            "schema": {
+                                "fields": [
+                                    {
+                                        "name": "ProductID"
+                                    },
+                                    {
+                                        "name": "ProductName"
+                                    }
+                                ]
+                            },
+                            "data": [
+                                {
+                                    "ProductID": "532",
+                                    "ProductName": "Seat Stays"
+                                }
+                            ]
+                        },
+                        "text/html": [
+                            "<table>",
+                            "<tr><th>ProductID</th><th>ProductName</th></tr>",
+                            "<tr><td>532</td><td>Seat Stays</td></tr>",
+                            "</table>"
+                        ]
+                    }
+                }
+            ],
+            "execution_count": 50
+        },
+        {
+            "cell_type": "markdown",
+            "source": [
+                "**Case # 007:**   \n",
+                "<span style=\"font-family: -apple-system, BlinkMacSystemFont, sans-serif; color: var(--vscode-foreground);\"><br>After renegotiation, AdventureWorks has cut a deal with their vendor, they will give a singular product to them for a hefty discount but only if they sell over a million units. Adventure works analysts have concluded it should be some kind of \"Road\" bike. ideally the largest variant, whose price is over $3000.&nbsp;</span>  Your job is to find the item that should be picked for this deal. <span style=\"font-family: -apple-system, BlinkMacSystemFont, sans-serif; color: var(--vscode-foreground);\"><br><br>Objectives:</span><span style=\"font-family: -apple-system, BlinkMacSystemFont, sans-serif; color: var(--vscode-foreground);\"><br></span>\n",
+                "\n",
+                "\\- Find all items  \n",
+                "\\- Find those items that contain the word \"road\"  \n",
+                "\\- Find those which cost more than $3000  \n",
+                "<span style=\"font-family: -apple-system, BlinkMacSystemFont, sans-serif; color: var(--vscode-foreground);\">- Combine your findings<br></span>"
+            ],
+            "metadata": {
+                "language": "sql",
+                "azdata_cell_guid": "0d062030-909a-4cb2-a058-4bb887c6336b"
+            },
+            "attachments": {}
+        },
+        {
+            "cell_type": "code",
+            "source": [
+                "SELECT \n",
+                "    ProductID,\n",
+                "    Name AS ProductName,\n",
+                "    ListPrice\n",
+                "FROM \n",
+                "    Production.Product\n",
+                "WHERE \n",
+                "     Name LIKE '%Road%'\n",
+                "     AND ListPrice > 3000\n",
+                "ORDER BY \n",
+                "    ListPrice DESC;"
+            ],
+            "metadata": {
+                "language": "sql",
+                "azdata_cell_guid": "a5ee0b42-3f4a-4300-99d2-dcb7b450bdd0",
+                "tags": [
+                    "hide_input"
+                ]
+            },
+            "outputs": [
+                {
+                    "output_type": "display_data",
+                    "data": {
+                        "text/html": "(5 rows affected)"
+                    },
+                    "metadata": {}
+                },
+                {
+                    "output_type": "display_data",
+                    "data": {
+                        "text/html": "Total execution time: 00:00:00.078"
+                    },
+                    "metadata": {}
+                },
+                {
+                    "output_type": "execute_result",
+                    "metadata": {},
+                    "execution_count": 63,
+                    "data": {
+                        "application/vnd.dataresource+json": {
+                            "schema": {
+                                "fields": [
+                                    {
+                                        "name": "ProductID"
+                                    },
+                                    {
+                                        "name": "ProductName"
+                                    },
+                                    {
+                                        "name": "ListPrice"
+                                    }
+                                ]
+                            },
+                            "data": [
+                                {
+                                    "ProductID": "749",
+                                    "ProductName": "Road-150 Red, 62",
+                                    "ListPrice": "3578.27"
+                                },
+                                {
+                                    "ProductID": "750",
+                                    "ProductName": "Road-150 Red, 44",
+                                    "ListPrice": "3578.27"
+                                },
+                                {
+                                    "ProductID": "751",
+                                    "ProductName": "Road-150 Red, 48",
+                                    "ListPrice": "3578.27"
+                                },
+                                {
+                                    "ProductID": "752",
+                                    "ProductName": "Road-150 Red, 52",
+                                    "ListPrice": "3578.27"
+                                },
+                                {
+                                    "ProductID": "753",
+                                    "ProductName": "Road-150 Red, 56",
+                                    "ListPrice": "3578.27"
+                                }
+                            ]
+                        },
+                        "text/html": [
+                            "<table>",
+                            "<tr><th>ProductID</th><th>ProductName</th><th>ListPrice</th></tr>",
+                            "<tr><td>749</td><td>Road-150 Red, 62</td><td>3578.27</td></tr>",
+                            "<tr><td>750</td><td>Road-150 Red, 44</td><td>3578.27</td></tr>",
+                            "<tr><td>751</td><td>Road-150 Red, 48</td><td>3578.27</td></tr>",
+                            "<tr><td>752</td><td>Road-150 Red, 52</td><td>3578.27</td></tr>",
+                            "<tr><td>753</td><td>Road-150 Red, 56</td><td>3578.27</td></tr>",
+                            "</table>"
+                        ]
+                    }
+                }
+            ],
+            "execution_count": 63
+        }
+    ]
+}
