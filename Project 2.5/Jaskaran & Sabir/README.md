@@ -1,7 +1,6 @@
 # Prestige Cars Database Normalization Project
 
-**Date**: November 21, 2024  
-**Location**: Y:\Dropbox\CommisionerRoest\DatabaseClass-CSCI331\Projects\Project 2.5 Normalization and UDT\Prestige_Cars_Normalization_Specification-20241121.docx
+https://drive.google.com/drive/folders/1VMjbR5dwp7sXF541dkzFtqkinyfSTmnN?usp=drive_link
 
 ## Table of Contents
 1. [Project Overview](#project-overview)
