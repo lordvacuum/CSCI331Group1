@@ -3,6 +3,11 @@
 **Date**: November 21, 2024  
 **Location**: Y:\Dropbox\CommisionerRoest\DatabaseClass-CSCI331\Projects\Project 2.5 Normalization and UDT\Prestige_Cars_Normalization_Specification-20241121.docx
 
+https://drive.google.com/drive/folders/1VMjbR5dwp7sXF541dkzFtqkinyfSTmnN?usp=drive_link
+This Drive link contains all of the individual files for each group member, their own documentation.
+
+All other links are in VideoLinks.md
+
 ## Table of Contents
 1. [Project Overview](#project-overview)
 2. [Schema Design and UDTs](#schema-design-and-udts)
